@@ -1,0 +1,15 @@
+{
+  "users": [
+    {
+      "id": "admin-id-default",
+      "name": "Jane Doe (Bureau Chief)",
+      "email": "admin@bigtv.com",
+      "password": "$2a$10$54cFHRjrYV3vTooxKB93Z.vueEDeVIrFZa8.ebAQ0wo/FyJfjm6Fa",
+      "division": "Political Bureau",
+      "bio": "Senior political bureau chief covering national assembly briefings, regional policy updates, and executive governance summits.",
+      "status": "LIVE RECORD",
+      "createdAt": "2026-06-29T11:58:39.463Z",
+      "updatedAt": "2026-06-29T12:03:14.873Z"
+    }
+  ]
+}
