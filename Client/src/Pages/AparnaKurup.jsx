@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import Lenis from 'lenis'
 import aparnaImg from '../assets/AparnaKurup.png'
+import ProfileLockOverlay from '../Components/ProfileLockOverlay.jsx'
 
 export default function AparnaKurup() {
   // Initialize Lenis smooth scroll
@@ -140,6 +141,7 @@ export default function AparnaKurup() {
   const [events, setEvents] = useState([])
   const [youtubeLink, setYoutubeLink] = useState('')
   const [selectedBlog, setSelectedBlog] = useState(null)
+  const [isPaid, setIsPaid] = useState(true)
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -158,10 +160,13 @@ export default function AparnaKurup() {
         if (res.ok) {
           const users = await res.json()
           const aparna = users.find(u => u.email?.toLowerCase() === 'aparna@bigtv.com')
-          if (aparna?.portfolio) {
-            setBlogs(aparna.portfolio.blogs || [])
-            setEvents(aparna.portfolio.events || [])
-            setYoutubeLink(aparna.portfolio.youtubeLink || '')
+          if (aparna) {
+            setIsPaid(aparna.isPaid ?? false)
+            if (aparna.portfolio) {
+              setBlogs(aparna.portfolio.blogs || [])
+              setEvents(aparna.portfolio.events || [])
+              setYoutubeLink(aparna.portfolio.youtubeLink || '')
+            }
           }
         }
       } catch (err) {
@@ -170,6 +175,12 @@ export default function AparnaKurup() {
     }
     fetchAparnaPortfolio()
   }, [])
+
+  useEffect(() => {
+    if (!isPaid) {
+      window.location.hash = `#/pending-payment?name=${encodeURIComponent("Aparna Kurup")}&role=${encodeURIComponent("Senior Coordinating Editor & Anchor")}`
+    }
+  }, [isPaid])
 
   const academics = [
     { degree: 'Master of International Communication', institute: 'Unitec, Auckland University of New Zealand' },
@@ -253,7 +264,7 @@ export default function AparnaKurup() {
 
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-50 py-6">
-          <div className="max-w-container-max mx-auto px-0 flex justify-between items-center w-full">
+          <div className="max-w-container-max mx-auto px-6 xl:px-0 flex justify-between items-center w-full">
            
             <div className="flex items-center gap-6">
               <a 
@@ -266,7 +277,7 @@ export default function AparnaKurup() {
           </div>
         </header>
 
-        <section className="flex-grow flex flex-col justify-between pt-16 pb-12 relative px-0 max-w-container-max mx-auto w-full">
+        <section className="flex-grow flex flex-col justify-between pt-16 pb-12 relative px-6 xl:px-0 max-w-container-max mx-auto w-full">
           
          
 
@@ -361,7 +372,7 @@ export default function AparnaKurup() {
         <div className="absolute inset-y-0 left-8 md:left-16 w-[1px] bg-black/5 pointer-events-none -z-10" />
         <div className="absolute inset-y-0 right-8 md:right-16 w-[1px] bg-black/5 pointer-events-none -z-10" />
 
-        <section className="px-0 max-w-container-max mx-auto w-full">
+        <section className="px-6 xl:px-0 max-w-container-max mx-auto w-full">
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -428,7 +439,7 @@ export default function AparnaKurup() {
         <div className="absolute inset-y-0 left-8 md:left-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
         <div className="absolute inset-y-0 right-8 md:right-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
 
-        <section className="px-0 max-w-container-max mx-auto w-full">
+        <section className="px-6 xl:px-0 max-w-container-max mx-auto w-full">
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -495,7 +506,7 @@ export default function AparnaKurup() {
         <div className="absolute inset-y-0 left-8 md:left-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
         <div className="absolute inset-y-0 right-8 md:right-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
 
-        <section className="px-0 max-w-container-max mx-auto w-full">
+        <section className="px-6 xl:px-0 max-w-container-max mx-auto w-full">
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -571,7 +582,7 @@ export default function AparnaKurup() {
         <div className="absolute inset-y-0 left-8 md:left-16 w-[1px] bg-black/5 pointer-events-none -z-10" />
         <div className="absolute inset-y-0 right-8 md:right-16 w-[1px] bg-black/5 pointer-events-none -z-10" />
 
-        <section className="px-0 max-w-container-max mx-auto w-full">
+        <section className="px-6 xl:px-0 max-w-container-max mx-auto w-full">
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -645,7 +656,7 @@ export default function AparnaKurup() {
           <div className="absolute inset-y-0 left-8 md:left-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
           <div className="absolute inset-y-0 right-8 md:right-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
 
-          <section className="px-0 max-w-container-max mx-auto w-full">
+          <section className="px-6 xl:px-0 max-w-container-max mx-auto w-full">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -708,7 +719,7 @@ export default function AparnaKurup() {
           <div className="absolute inset-y-0 left-8 md:left-16 w-[1px] bg-black/5 pointer-events-none -z-10" />
           <div className="absolute inset-y-0 right-8 md:right-16 w-[1px] bg-black/5 pointer-events-none -z-10" />
 
-          <section className="px-0 max-w-container-max mx-auto w-full">
+          <section className="px-6 xl:px-0 max-w-container-max mx-auto w-full">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -797,7 +808,7 @@ export default function AparnaKurup() {
           <div className="absolute inset-y-0 left-8 md:left-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
           <div className="absolute inset-y-0 right-8 md:right-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
 
-          <section className="px-0 max-w-container-max mx-auto w-full">
+          <section className="px-6 xl:px-0 max-w-container-max mx-auto w-full">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -894,7 +905,7 @@ export default function AparnaKurup() {
         <div className="absolute inset-y-0 left-8 md:left-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
         <div className="absolute inset-y-0 right-8 md:right-16 w-[1px] bg-white/5 pointer-events-none -z-10" />
 
-        <section className="px-0 max-w-container-max mx-auto w-full my-auto">
+        <section className="px-6 xl:px-0 max-w-container-max mx-auto w-full my-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             
             {/* Academics Left */}
@@ -935,82 +946,104 @@ export default function AparnaKurup() {
                 <h2 className="font-display text-4xl font-extrabold text-white uppercase tracking-tight">Verified Gateways</h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <a 
-                  href="https://x.com/aparnakurup?s=11&t=pmxdUhf4CvjZXn2SC9tqXw"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#111216]/50 border border-white/5 rounded-xl p-6 flex items-center justify-between hover:border-[#32776c]/30 hover:bg-[#111216]/70 transition-all font-mono text-xs tracking-wider"
-                >
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-[#32776c] fill-current" viewBox="0 0 24 24">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                    TWITTER
-                  </span>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-                </a>
+              <div className="relative w-full">
+                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 transition-all duration-300 ${!isPaid ? 'blur-md pointer-events-none select-none' : ''}`}>
+                  <a 
+                    href="https://x.com/aparnakurup?s=11&t=pmxdUhf4CvjZXn2SC9tqXw"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#111216]/50 border border-white/5 rounded-xl p-6 flex items-center justify-between hover:border-[#32776c]/30 hover:bg-[#111216]/70 transition-all font-mono text-xs tracking-wider"
+                  >
+                    <span className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-[#32776c] fill-current" viewBox="0 0 24 24">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                      </svg>
+                      TWITTER
+                    </span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                  </a>
 
-                <a 
-                  href="https://www.instagram.com/aparnakurup/?utm_source=ig_web_button_share_sheet"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#111216]/50 border border-white/5 rounded-xl p-6 flex items-center justify-between hover:border-[#32776c]/30 hover:bg-[#111216]/70 transition-all font-mono text-xs tracking-wider"
-                >
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-[#32776c]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
-                    INSTAGRAM
-                  </span>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-                </a>
+                  <a 
+                    href="https://www.instagram.com/aparnakurup/?utm_source=ig_web_button_share_sheet"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#111216]/50 border border-white/5 rounded-xl p-6 flex items-center justify-between hover:border-[#32776c]/30 hover:bg-[#111216]/70 transition-all font-mono text-xs tracking-wider"
+                  >
+                    <span className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-[#32776c]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                      </svg>
+                      INSTAGRAM
+                    </span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                  </a>
 
-                <a 
-                  href="https://www.linkedin.com/in/aparnakurup?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#111216]/50 border border-white/5 rounded-xl p-6 flex items-center justify-between hover:border-[#32776c]/30 hover:bg-[#111216]/70 transition-all font-mono text-xs tracking-wider"
-                >
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-[#32776c] fill-current" viewBox="0 0 24 24">
-                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                    </svg>
-                    LINKEDIN
-                  </span>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-                </a>
+                  <a 
+                    href="https://www.linkedin.com/in/aparnakurup?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#111216]/50 border border-white/5 rounded-xl p-6 flex items-center justify-between hover:border-[#32776c]/30 hover:bg-[#111216]/70 transition-all font-mono text-xs tracking-wider"
+                  >
+                    <span className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-[#32776c] fill-current" viewBox="0 0 24 24">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                      </svg>
+                      LINKEDIN
+                    </span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                  </a>
 
-                <a 
-                  href="https://www.facebook.com/aparnaramakrishnakurup?mibextid=wwXIfr&rdid=0S9ku0RvbZEAI1JE&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18vE1u2kXg%2F%3Fmibextid%3DwwXIfr#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#111216]/50 border border-white/5 rounded-xl p-6 flex items-center justify-between hover:border-[#32776c]/30 hover:bg-[#111216]/70 transition-all font-mono text-xs tracking-wider"
-                >
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-[#32776c] fill-current" viewBox="0 0 24 24">
-                      <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
-                    </svg>
-                    FACEBOOK
-                  </span>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
-                </a>
+                  <a 
+                    href="https://www.facebook.com/aparnaramakrishnakurup?mibextid=wwXIfr&rdid=0S9ku0RvbZEAI1JE&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18vE1u2kXg%2F%3Fmibextid%3DwwXIfr#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#111216]/50 border border-white/5 rounded-xl p-6 flex items-center justify-between hover:border-[#32776c]/30 hover:bg-[#111216]/70 transition-all font-mono text-xs tracking-wider"
+                  >
+                    <span className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-[#32776c] fill-current" viewBox="0 0 24 24">
+                        <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                      </svg>
+                      FACEBOOK
+                    </span>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                  </a>
+                </div>
+                
+                {!isPaid && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md rounded-2xl p-6 text-center border border-red-500/20">
+                    <span className="bg-red-500/10 border border-red-500/20 px-3.5 py-1 rounded-full text-[9px] font-mono tracking-widest text-red-500 uppercase font-bold mb-3">
+                      PENDING AMOUNT SIGNAL
+                    </span>
+                    <p className="font-mono text-[9px] text-neutral-400 uppercase tracking-widest max-w-[280px] leading-relaxed">
+                      Access to verified gateways is currently gated. Please activate this registry profile from your dashboard.
+                    </p>
+                  </div>
+                )}
               </div>
             </motion.div>
 
           </div>
         </section>
-
-        {/* Footer */}
-        <footer className="border-t border-white/5 py-12 bg-[#070709] w-full text-center text-xs font-mono text-slate-500 px-0 mt-auto">
-          <div className="max-w-container-max mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-            <span>&copy; 2026 BIG TV NEWSNET. ALL RIGHTS RESERVED.</span>
-            <span>SYSTEM ACC SYNC: ACTIVE</span>
-          </div>
-        </footer>
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-white/5 py-12 bg-[#070709] w-full text-xs font-mono text-slate-500 px-6 md:px-[60px] relative z-50">
+        <div className="max-w-container-max mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+          <span>&copy; 2026 BIG TV NEWSNET. ALL RIGHTS RESERVED.</span>
+          <div className="flex items-center gap-3 font-bold text-slate-400 uppercase tracking-[0.2em]">
+            <span>POWERED BY</span>
+            <a href="https://www.socialbureau.in/enquiry-form" target="_blank" rel="noopener noreferrer" className="flex items-center">
+              <img
+                src="https://www.socialbureau.in/assets/logo.webp"
+                alt="SocialBureau"
+                className="h-5 md:h-6 w-auto"
+              />
+            </a>
+          </div>
+        </div>
+      </footer>
 
     </div>
   )

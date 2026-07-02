@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import Lenis from 'lenis'
 import aryaImg from '../assets/AryaSurendran.png'
+import ProfileLockOverlay from '../Components/ProfileLockOverlay.jsx'
 
 // Interactive Golden Particle Backdrop
 const InteractiveParticles = () => {
@@ -182,6 +183,7 @@ export default function AryaSurendran() {
   const [events, setEvents] = useState([])
   const [youtubeLink, setYoutubeLink] = useState('')
   const [selectedBlog, setSelectedBlog] = useState(null)
+  const [isPaid, setIsPaid] = useState(true)
 
   // Scroll tracking for indicator
   const { scrollYProgress } = useScroll()
@@ -199,10 +201,13 @@ export default function AryaSurendran() {
         if (res.ok) {
           const users = await res.json()
           const arya = users.find(u => u.email?.toLowerCase() === 'arya@bigtv.com')
-          if (arya?.portfolio) {
-            setBlogs(arya.portfolio.blogs || [])
-            setEvents(arya.portfolio.events || [])
-            setYoutubeLink(arya.portfolio.youtubeLink || '')
+          if (arya) {
+            setIsPaid(arya.isPaid ?? false)
+            if (arya.portfolio) {
+              setBlogs(arya.portfolio.blogs || [])
+              setEvents(arya.portfolio.events || [])
+              setYoutubeLink(arya.portfolio.youtubeLink || '')
+            }
           }
         }
       } catch (err) {
@@ -212,7 +217,12 @@ export default function AryaSurendran() {
     fetchAryaPortfolio()
   }, [])
 
-  // Initialize Lenis smooth scroll
+  useEffect(() => {
+    if (!isPaid) {
+      window.location.hash = `#/pending-payment?name=${encodeURIComponent("Arya Surendran")}&role=${encodeURIComponent("Associate News Editor & Anchor")}`
+    }
+  }, [isPaid])
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.4,
@@ -312,12 +322,9 @@ export default function AryaSurendran() {
 
       {/* Header */}
       <header className="w-full z-50 bg-[#050505]/85 backdrop-blur-md border-b border-white/5 py-6 sticky top-0">
-        <nav className="flex justify-between items-center max-w-7xl mx-auto px-8 w-full">
+        <nav className="flex justify-between items-center max-w-7xl mx-auto px-6 md:px-8 w-full">
           <div className="flex items-center gap-2">
-            <a href="#/" className="flex items-center gap-2 font-display text-sm font-black uppercase tracking-wider hover:text-[#ffd32a] transition-colors">
-              <span className="w-6 h-6 bg-[#ffd32a] rounded-full flex items-center justify-center text-[#050505] text-[11px] font-bold">B</span>
-              <span>BIG TV NEWSNET</span>
-            </a>
+            
           </div>
           <div className="flex items-center gap-6">
             <a 
@@ -343,14 +350,10 @@ export default function AryaSurendran() {
         >
           <div className="absolute top-[20%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-[#ffd32a]/5 filter blur-[150px] pointer-events-none -z-10" />
           
-          <div className="max-w-7xl mx-auto px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div className="max-w-7xl mx-auto px-6 md:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
             {/* Title / Description */}
             <div className="lg:col-span-7 space-y-8 text-left">
-              <div className="inline-flex items-center gap-2.5 bg-[#ffd32a]/10 border border-[#ffd32a]/20 px-4 py-1.5 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-[#ffd32a] animate-ping" />
-                <span className="font-mono text-[9px] tracking-widest text-[#ffd32a] font-bold uppercase">ACC JOURNALIST REGISTRY</span>
-              </div>
               
               <div className="space-y-4">
                 <h1 className="font-display text-5xl md:text-8xl font-black tracking-tight leading-[0.95] text-white uppercase">
@@ -366,19 +369,7 @@ export default function AryaSurendran() {
               </p>
 
               <div className="pt-4 flex flex-wrap gap-4">
-                <button
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="inline-flex items-center gap-2 bg-[#ffd32a] hover:bg-yellow-400 text-[#050505] px-8 py-4 rounded-full font-mono text-[10px] uppercase font-bold tracking-widest transition-all duration-300 shadow-lg shadow-[#ffd32a]/10 cursor-pointer"
-                >
-                  {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current translate-x-[0.5px]" />}
-                  {isPlaying ? `ON AIR: ${onAirTime}` : 'ACTIVATE BROADCAST STREAM'}
-                </button>
-                <a
-                  href="#showreel"
-                  className="inline-flex items-center gap-1.5 bg-white/5 hover:bg-[#ffd32a] hover:text-[#050505] border border-white/10 px-8 py-4 rounded-full font-mono text-[10px] uppercase font-bold tracking-widest transition-all duration-300"
-                >
-                  Watch Showreels
-                </a>
+             
               </div>
             </div>
 
@@ -434,7 +425,7 @@ export default function AryaSurendran() {
           variants={sectionVariants}
           className="py-32 border-b border-white/5 relative"
         >
-          <div className="max-w-7xl mx-auto px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div className="max-w-7xl mx-auto px-6 md:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
             {/* Left Content */}
             <div className="lg:col-span-5 text-left space-y-6">
@@ -471,43 +462,44 @@ export default function AryaSurendran() {
             </div>
 
             {/* Orbiting Ring Chart */}
-            <div className="lg:col-span-7 flex justify-center">
+            <div className="lg:col-span-7 flex justify-center w-full">
               <div className="relative w-full max-w-[480px] h-[400px] bg-[#0c0c0f] border border-white/5 rounded-[48px] shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-xl flex items-center justify-center overflow-hidden">
-                <div className="absolute w-[240px] h-[240px] border border-dashed border-[#ffd32a]/15 rounded-full animate-[spin_60s_linear_infinite]" />
-                
-                {/* Central Node */}
-                <div className="relative w-28 h-28 bg-[#121216] rounded-full shadow-md flex flex-col items-center justify-center text-center p-4 border border-[#ffd32a]/10 z-20">
-                  <span className="font-display text-xs font-black text-[#ffd32a] uppercase leading-none">Journalism</span>
-                  <span className="font-mono text-[8px] text-slate-500 mt-1.5 uppercase">Since 2016</span>
+                <div className="relative w-full h-full flex items-center justify-center scale-[0.75] xs:scale-[0.85] sm:scale-95 md:scale-100 origin-center">
+                  <div className="absolute w-[240px] h-[240px] border border-dashed border-[#ffd32a]/15 rounded-full animate-[spin_60s_linear_infinite]" />
+                  
+                  {/* Central Node */}
+                  <div className="relative w-28 h-28 bg-[#121216] rounded-full shadow-md flex flex-col items-center justify-center text-center p-4 border border-[#ffd32a]/10 z-20">
+                    <span className="font-display text-xs font-black text-[#ffd32a] uppercase leading-none">Journalism</span>
+                    <span className="font-mono text-[8px] text-slate-500 mt-1.5 uppercase">Since 2016</span>
+                  </div>
+
+                  {/* Satellite Nodes - Automatically updates activeIndex and changes color of active circle */}
+                  {bubbleTags.map((tag, idx) => {
+                    const isActive = idx === activeIndex
+                    return (
+                      <motion.button
+                        key={idx}
+                        onMouseEnter={() => setActiveIndex(idx)}
+                        whileHover={{ scale: 1.15 }}
+                        className={`absolute w-20 h-20 rounded-full shadow-md flex items-center justify-center text-center p-2 cursor-pointer focus:outline-none transition-all duration-300 z-10 ${
+                          isActive 
+                            ? 'bg-[#ffd32a] border-2 border-white text-[#050505] shadow-[0_0_20px_rgba(255,211,42,0.4)] scale-110' 
+                            : 'bg-[#1e1e24] border border-white/5 text-white hover:border-[#ffd32a]/40'
+                        }`}
+                        style={{
+                          left: `calc(50% - 40px + ${tag.x}px)`,
+                          top: `calc(50% - 40px + ${tag.y}px)`
+                        }}
+                      >
+                        <span className={`font-display text-[9px] font-extrabold leading-snug transition-colors ${
+                          isActive ? 'text-[#050505]' : 'text-white'
+                        }`}>
+                          {tag.label}
+                        </span>
+                      </motion.button>
+                    )
+                  })}
                 </div>
-
-                {/* Satellite Nodes - Automatically updates activeIndex and changes color of active circle */}
-                {bubbleTags.map((tag, idx) => {
-                  const isActive = idx === activeIndex
-                  return (
-                    <motion.button
-                      key={idx}
-                      onMouseEnter={() => setActiveIndex(idx)}
-                      whileHover={{ scale: 1.15 }}
-                      className={`absolute w-20 h-20 rounded-full shadow-md flex items-center justify-center text-center p-2 cursor-pointer focus:outline-none transition-all duration-300 z-10 ${
-                        isActive 
-                          ? 'bg-[#ffd32a] border-2 border-white text-[#050505] shadow-[0_0_20px_rgba(255,211,42,0.4)] scale-110' 
-                          : 'bg-[#1e1e24] border border-white/5 text-white hover:border-[#ffd32a]/40'
-                      }`}
-                      style={{
-                        left: `calc(50% - 40px + ${tag.x}px)`,
-                        top: `calc(50% - 40px + ${tag.y}px)`
-                      }}
-                    >
-                      <span className={`font-display text-[9px] font-extrabold leading-snug transition-colors ${
-                        isActive ? 'text-[#050505]' : 'text-white'
-                      }`}>
-                        {tag.label}
-                      </span>
-                    </motion.button>
-                  )
-                })}
-
               </div>
             </div>
 
@@ -522,7 +514,7 @@ export default function AryaSurendran() {
           variants={sectionVariants}
           className="py-32 border-b border-white/5 relative"
         >
-          <div className="max-w-7xl mx-auto px-8 w-full space-y-16">
+          <div className="max-w-7xl mx-auto px-6 md:px-8 w-full space-y-16">
             
             <div className="text-left max-w-3xl space-y-4">
               <div className="flex items-center gap-2">
@@ -580,7 +572,7 @@ export default function AryaSurendran() {
           variants={sectionVariants}
           className="py-32 border-b border-white/5 relative"
         >
-          <div className="max-w-4xl mx-auto px-8 w-full space-y-16">
+          <div className="max-w-4xl mx-auto px-6 md:px-8 w-full space-y-16">
             
             <div className="text-center space-y-4">
               <span className="font-mono text-xs text-[#ffd32a] tracking-[0.25em] uppercase block font-bold">CHRONOLOGY</span>
@@ -627,7 +619,7 @@ export default function AryaSurendran() {
             variants={sectionVariants}
             className="py-32 border-b border-white/5 relative"
           >
-            <div className="max-w-7xl mx-auto px-8 w-full space-y-16">
+            <div className="max-w-7xl mx-auto px-6 md:px-8 w-full space-y-16">
               
               <div className="flex flex-col md:flex-row justify-between items-baseline gap-4 text-left">
                 <div>
@@ -685,7 +677,7 @@ export default function AryaSurendran() {
             className="py-32 border-b border-white/5 relative" 
             id="blogs"
           >
-            <div className="max-w-7xl mx-auto px-8 w-full space-y-16">
+            <div className="max-w-7xl mx-auto px-6 md:px-8 w-full space-y-16">
               
               <div className="flex flex-col md:flex-row justify-between items-baseline gap-4 text-left">
                 <div>
@@ -745,7 +737,7 @@ export default function AryaSurendran() {
             variants={sectionVariants}
             className="py-32 border-b border-white/5 relative"
           >
-            <div className="max-w-7xl mx-auto px-8 w-full space-y-16">
+            <div className="max-w-7xl mx-auto px-6 md:px-8 w-full space-y-16">
               
               <div className="flex flex-col md:flex-row justify-between items-baseline gap-4 text-left">
                 <div>
@@ -800,7 +792,7 @@ export default function AryaSurendran() {
           variants={sectionVariants}
           className="py-32 text-center space-y-12"
         >
-          <div className="max-w-4xl mx-auto px-8 space-y-6">
+          <div className="max-w-4xl mx-auto px-6 md:px-8 space-y-6">
             <span className="font-mono text-xs text-[#ffd32a] tracking-[0.25em] uppercase block font-bold">VERIFIED CONTACT</span>
             <h2 className="font-display text-4xl md:text-7xl font-black text-white uppercase">Social Gateway</h2>
             <p className="text-sm md:text-base text-slate-400 max-w-xl mx-auto font-light">
@@ -808,31 +800,44 @@ export default function AryaSurendran() {
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6">
-            <a 
-              href="https://www.facebook.com/share/1ASPMe7d3X/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-10 py-5 bg-[#121216] hover:bg-[#ffd32a] text-white hover:text-[#050505] border border-white/5 transition-all font-mono text-[10px] uppercase font-bold tracking-widest rounded-2xl shadow-sm cursor-pointer"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
-              </svg>
-              Facebook Profile
-            </a>
-            <a 
-              href="https://www.instagram.com/arya_mani_surendran?igsh=MXZnMGoxYnJjcjNzZw%3D%3D"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-10 py-5 bg-[#ffd32a] text-[#050505] hover:bg-yellow-400 transition-all font-mono text-[10px] uppercase font-bold tracking-widest rounded-2xl shadow-sm cursor-pointer"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-              </svg>
-              Instagram Channel
-            </a>
+          <div className="relative max-w-lg mx-auto">
+            <div className={`flex flex-wrap justify-center gap-6 transition-all duration-300 ${!isPaid ? 'blur-md pointer-events-none select-none' : ''}`}>
+              <a 
+                href="https://www.facebook.com/share/1ASPMe7d3X/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-10 py-5 bg-[#121216] hover:bg-[#ffd32a] text-white hover:text-[#050505] border border-white/5 transition-all font-mono text-[10px] uppercase font-bold tracking-widest rounded-2xl shadow-sm cursor-pointer"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                </svg>
+                Facebook Profile
+              </a>
+              <a 
+                href="https://www.instagram.com/arya_mani_surendran?igsh=MXZnMGoxYnJjcjNzZw%3D%3D"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-10 py-5 bg-[#ffd32a] text-[#050505] hover:bg-yellow-400 transition-all font-mono text-[10px] uppercase font-bold tracking-widest rounded-2xl shadow-sm cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                Instagram Channel
+              </a>
+            </div>
+            
+            {!isPaid && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm rounded-2xl p-6 text-center border border-red-500/20">
+                <span className="bg-red-500/10 border border-red-500/20 px-3.5 py-1 rounded-full text-[9px] font-mono tracking-widest text-red-500 uppercase font-bold mb-3">
+                  PENDING AMOUNT SIGNAL
+                </span>
+                <p className="font-mono text-[9px] text-neutral-400 uppercase tracking-widest max-w-[280px] leading-relaxed">
+                  Access to verified gateways is currently gated. Please activate this registry profile from your dashboard.
+                </p>
+              </div>
+            )}
           </div>
         </motion.section>
 
@@ -887,10 +892,19 @@ export default function AryaSurendran() {
       </AnimatePresence>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-12 bg-[#050505] w-full text-center text-xs font-mono text-slate-600 z-50">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 px-8">
+      <footer className="border-t border-white/5 py-12 bg-[#050505] w-full text-xs font-mono text-slate-600 px-6 md:px-[60px] relative z-50">
+        <div className="max-w-container-max mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <span>&copy; 2026 BIG TV NEWSNET. ALL RIGHTS RESERVED.</span>
-          <span>AR-ACC REGISTERED SYSTEM</span>
+          <div className="flex items-center gap-3 font-bold text-slate-500 uppercase tracking-[0.2em]">
+            <span>POWERED BY</span>
+            <a href="https://www.socialbureau.in/enquiry-form" target="_blank" rel="noopener noreferrer" className="flex items-center">
+              <img
+                src="https://www.socialbureau.in/assets/logo.webp"
+                alt="SocialBureau"
+                className="h-5 md:h-6 w-auto"
+              />
+            </a>
+          </div>
         </div>
       </footer>
 

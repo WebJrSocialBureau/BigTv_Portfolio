@@ -166,6 +166,17 @@ const getEmbedUrl = (url) => {
   return url;
 };
 
+// Helper to load external scripts dynamically
+const loadScript = (src) => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script')
+    script.src = src
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
+}
+
 export default function Dashboard() {
   const [user, setUser] = useState({
     name: '',
@@ -234,6 +245,94 @@ export default function Dashboard() {
       result.push({ ...defaultValue })
     }
     return result.slice(0, 3)
+  }
+
+  const handleUnlockProfile = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      alert('Your editorial terminal session has expired. Please sign in again.')
+      return
+    }
+
+    try {
+      // 1. Load Razorpay script
+      const scriptLoaded = await loadScript('https://checkout.razorpay.com/v1/checkout.js')
+      if (!scriptLoaded) {
+        alert('Failed to load Razorpay payment gateway. Please check your internet connection.')
+        return
+      }
+
+      // 2. Create order on backend (₹2 charge)
+      const resOrder = await fetch('/api/payment/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ amount: 2 })
+      })
+
+      if (!resOrder.ok) {
+        const errData = await resOrder.json()
+        throw new Error(errData.message || 'Failed to create payment order.')
+      }
+
+      const orderData = await resOrder.json()
+
+      // 3. Open Razorpay checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_SoNz6WoLNwdc0l',
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'BIG TV NEWSNET',
+        description: `Unlock Public Profile Gating`,
+        image: 'https://www.socialbureau.in/assets/logo.webp',
+        order_id: orderData.orderId,
+        handler: async function (response) {
+          try {
+            // 4. Verify signature on backend
+            const resVerify = await fetch('/api/payment/verify', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            })
+
+            const verifyData = await resVerify.json()
+            if (verifyData.verified) {
+              setUser(verifyData.user)
+              localStorage.setItem('currentUser', JSON.stringify(verifyData.user))
+              setNotification('Payment verified! Your public profile registry has been unlocked successfully.')
+            } else {
+              throw new Error(verifyData.message || 'Payment signature verification failed.')
+            }
+          } catch (verifyErr) {
+            console.error('Verify error:', verifyErr)
+            alert(`Payment verification failed: ${verifyErr.message}`)
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email
+        },
+        theme: {
+          color: '#e30613'
+        }
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.open()
+
+    } catch (err) {
+      console.error('Payment error:', err)
+      alert(`Payment failed to initialize: ${err.message}`)
+    }
   }
 
   const handleImageUpload = async (e) => {
@@ -435,6 +534,57 @@ export default function Dashboard() {
         {/* Dashboard Grid */}
         <div className="max-w-4xl mx-auto space-y-8">
           
+          {/* Profile Activation Warning Banner */}
+          {!user.isPaid && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-red-50 border border-red-200/60 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6"
+            >
+              <div className="flex gap-4 items-start text-left">
+                <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-red-600 animate-pulse" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-display font-bold text-sm uppercase text-red-800 tracking-tight">
+                    Pending Amount Signal
+                  </h4>
+                  <p className="font-body text-xs text-red-600/90 leading-relaxed font-light">
+                    Your public correspondent registry page is currently locked. The contact gateways are blurred out for visitors. Activate your public registry to enable full details.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleUnlockProfile}
+                className="shrink-0 px-6 py-3 rounded-full bg-[#e30613] hover:bg-[#b0050d] text-white font-mono text-[10px] font-bold uppercase tracking-widest transition-all duration-300 shadow-md shadow-[#e30613]/10 cursor-pointer"
+              >
+                Activate Registry • ₹2
+              </button>
+            </motion.div>
+          )}
+
+          {/* Profile Activated Success Badge */}
+          {user.isPaid && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-emerald-50 border border-emerald-100/50 rounded-2xl p-5 shadow-sm flex items-center gap-4 text-left"
+            >
+              <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-display font-bold text-xs uppercase text-emerald-800 tracking-tight">
+                  Verified Public Registry Active
+                </h4>
+                <p className="font-body text-[11px] text-emerald-600/90 leading-relaxed">
+                  Your portfolio is fully activated. All contact gateways are fully visible to public visitors.
+                </p>
+              </div>
+            </motion.div>
+          )}
+
           {/* Edit form */}
           <div className="space-y-8">
             <motion.div 

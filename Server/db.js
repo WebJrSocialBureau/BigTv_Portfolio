@@ -94,6 +94,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: 'PENDING VERIFICATION'
   },
+  isPaid: {
+    type: Boolean,
+    default: false
+  },
   portfolio: {
     type: PortfolioSchema,
     default: () => ({})
@@ -286,6 +290,113 @@ const defaultAryaPortfolio = {
   youtubeLink: ""
 };
 
+const defaultBinilPortfolio = {
+  heroTitle: "Journalism of Impact: Truth in Presentation",
+  heroSubtitle: "Senior News Editor & Anchor at BIG TV Malayalam. Managing desk strategy and anchoring flagship broadcasts after national correspondent tenures.",
+  pillars: [
+    { title: "Broadcast Anchoring", desc: "Commanding prime-time news bulletins, debate moderatorships, and live breaking coverages." },
+    { title: "Desk Leadership", desc: "Supervising output desk operations, coordinating desk strategy, and editing regional copy feeds." },
+    { title: "National Correspondence", desc: "Years of ground-level political reporting across Delhi and Mumbai bureaus for Kerala's leading news networks." }
+  ],
+  timeline: [
+    { period: "2024 - PRESENT", title: "Desk Chief & Senior News Editor", desc: "BIG TV Malayalam. Prime-time news anchoring, managing output desk operations, and general news gathering strategy." },
+    { period: "2020 - 2024", title: "Political Bureau Correspondent", desc: "National Bureaus (Delhi & Mumbai). On-site coverage of national events, major elections, and parliamentary briefings." },
+    { period: "2016 - 2020", title: "Senior News Anchor & Reporter", desc: "Manorama News & Reporter TV. Anchor operations, prime-time bullet coordination, and high-profile political panels." },
+    { period: "2012 - 2016", title: "Broadcast Journalist", desc: "MediaOne & News Malayalam 24/7. News gathering, copy desk operations, and anchor-side presentations." }
+  ],
+  broadcastHighlights: [],
+  awards: [
+    { title: "Outstanding Political Coverage", category: "Broadcast Journalism Awards", desc: "Awarded for exceptional ground reports and election bulletin coverage from the Delhi Bureau." }
+  ],
+  blogs: [
+    {
+      title: "The Dynamic Intersection of Newsroom Strategy and Live Presentation",
+      date: "June 28, 2026",
+      excerpt: "Reflections on bridging the gap between desk coordination and live primetime anchor delivery under breaking news pressure.",
+      content: "A prime-time anchor must be more than a presenter reading copy; they must be a desk journalist who understands the deep structural flows of the story. Coordinating live satellite feeds, updating editorial bulletins in real time, and maintaining composure under the studio lights are all testaments to newsroom preparation."
+    }
+  ],
+  events: [],
+  youtubeLink: ""
+};
+
+const defaultSujayaPortfolio = {
+  heroTitle: "Journalism of Integrity & Mass Outreach",
+  heroSubtitle: "Chief Editor at BIG TV Malayalam. Renowned Malayalam prime-time news anchor with over 18 years of editorial excellence across Reporter TV, Asianet News, and 24 News.",
+  pillars: [
+    {
+      title: "Editorial Leadership",
+      desc: "Directing newsroom policy, overseeing prime-time bulletins, and mentoring the broadcast division to maintain highest accuracy."
+    },
+    {
+      title: "Prime-Time Debate",
+      desc: "Moderator of flagship socio-political programs, known for sharp questioning, balanced moderation, and ground verification."
+    },
+    {
+      title: "Broadcast Innovation",
+      desc: "Leading regional Malayalam news expansion, leveraging digital correspondence, and bridging satellite delivery with real-time news."
+    }
+  ],
+  timeline: [
+    {
+      period: "2026 — PRESENT",
+      title: "Chief Editor",
+      desc: "BIG TV Malayalam. Leading the network's editorial policies, desk strategy, and hosting flagship talk shows.",
+      tags: ["Editorial", "Anchoring"]
+    },
+    {
+      period: "2023 — 2026",
+      title: "Coordinating Editor",
+      desc: "Reporter TV. Anchored prime-time segments and moderated 'Meet the Editors'. Overseeing daily bulletin layouts.",
+      tags: ["Newsroom", "Anchor"]
+    },
+    {
+      period: "2018 — 2023",
+      title: "Senior News Editor",
+      desc: "24 News & Asianet News. Managing investigative desks, national bureaus, and anchoring prime-time debates.",
+      tags: ["Reporting", "Editor"]
+    }
+  ],
+  broadcastHighlights: [
+    {
+      period: "Present",
+      station: "BIG TV MALAYALAM",
+      title: "Chief Editor's Desk",
+      desc: "Directing the overall news gathering, editorial validation, and high-impact investigative reporting teams."
+    },
+    {
+      period: "2023 — 2026",
+      station: "REPORTER TV",
+      title: "Meet the Editors",
+      desc: "Leading discussions with senior journalists and analyzing state policy, elections, and national events."
+    }
+  ],
+  awards: [
+    {
+      title: "Best News Anchor Award",
+      category: "EXCELLENCE",
+      desc: "Awarded for exceptional anchoring, calm demeanor, and balanced coverage of critical political events in Kerala."
+    }
+  ],
+  blogs: [
+    {
+      title: "The Evolving Landscape of Malayalam News Broadcasting",
+      date: "July 01, 2026",
+      excerpt: "Analyzing the shift from traditional satellite television to multi-platform digital broadcasting and its impact on news credibility.",
+      content: "Broadcasting is changing rapidly. The line between television screens and mobile screens is fading. In this fast-paced transition, the core values of verification, ground checks, and source validation remain the anchors of reliable journalism."
+    }
+  ],
+  events: [
+    {
+      title: "Media Ethics & Modern Journalism Summit",
+      desc: "Keynote presentation on navigating disinformation, desk verification, and audience engagement.",
+      date: "2026-07-20",
+      location: "Kochi Press Club"
+    }
+  ],
+  youtubeLink: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+};
+
 // Seed default accounts
 async function seedDefaultAccounts() {
   try {
@@ -375,6 +486,48 @@ async function seedDefaultAccounts() {
       await aryaUser.save();
       console.log('Updated existing Arya Surendran with default portfolio schema.');
     }
+
+    // 5. Seed Binil Pothen
+    const binilEmail = 'binil@bigtv.com';
+    let binilUser = await User.findOne({ email: binilEmail });
+    if (!binilUser) {
+      const hashedPassword = await bcrypt.hash('binil123', 10);
+      await User.create({
+        name: 'Binil Pothen Babu',
+        email: binilEmail,
+        password: hashedPassword,
+        division: 'Senior News Editor',
+        bio: 'Senior News Editor and Anchor at BIG TV Malayalam.',
+        status: 'LIVE RECORD',
+        portfolio: defaultBinilPortfolio
+      });
+      console.log('Seeded Binil Pothen Babu account into MongoDB.');
+    } else if (!binilUser.portfolio || !binilUser.portfolio.heroTitle) {
+      binilUser.portfolio = defaultBinilPortfolio;
+      await binilUser.save();
+      console.log('Updated existing Binil Pothen Babu with default portfolio schema.');
+    }
+
+    // 6. Seed Sujaya Parvathy
+    const sujayaEmail = 'sujaya@bigtv.com';
+    let sujayaUser = await User.findOne({ email: sujayaEmail });
+    if (!sujayaUser) {
+      const hashedPassword = await bcrypt.hash('sujaya123', 10);
+      await User.create({
+        name: 'Sujaya Parvathy',
+        email: sujayaEmail,
+        password: hashedPassword,
+        division: 'Chief Editor',
+        bio: 'Chief Editor at BIG TV Malayalam. Over 18 years of broadcast news leadership and prime-time anchoring.',
+        status: 'LIVE RECORD',
+        portfolio: defaultSujayaPortfolio
+      });
+      console.log('Seeded Sujaya Parvathy account into MongoDB.');
+    } else if (!sujayaUser.portfolio || !sujayaUser.portfolio.heroTitle) {
+      sujayaUser.portfolio = defaultSujayaPortfolio;
+      await sujayaUser.save();
+      console.log('Updated existing Sujaya Parvathy with default portfolio schema.');
+    }
   } catch (err) {
     console.error('Error seeding default accounts:', err);
   }
@@ -456,6 +609,18 @@ export async function updateUser(id, updates) {
 
   await user.save();
 
+  const userObj = user.toJSON();
+  delete userObj.password;
+  return userObj;
+}
+
+export async function updateUserPaidStatus(id, isPaid) {
+  const user = await User.findById(id);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  user.isPaid = isPaid;
+  await user.save();
   const userObj = user.toJSON();
   delete userObj.password;
   return userObj;

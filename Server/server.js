@@ -6,12 +6,14 @@ import bcrypt from 'bcryptjs';
 import authMiddleware from './middleware/auth.js';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import multer from 'multer';
+import crypto from 'crypto';
 import {
   getUsers,
   findUserByEmail,
   findUserById,
   createUser,
-  updateUser
+  updateUser,
+  updateUserPaidStatus
 } from './db.js';
 
 dotenv.config();
@@ -206,6 +208,71 @@ app.get('/api/users', async (req, res) => {
   } catch (err) {
     console.error('Fetch users list error:', err);
     res.status(500).json({ message: 'Internal server error fetching user directories.' });
+  }
+});
+
+// 6. Payment Gateways - Create Razorpay Order (JWT Protected)
+app.post('/api/payment/order', authMiddleware, async (req, res) => {
+  try {
+    const { amount } = req.body;
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Amount is required and must be greater than zero.' });
+    }
+
+    const authHeader = 'Basic ' + Buffer.from(`${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`).toString('base64');
+    const response = await fetch('https://api.razorpay.com/v1/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader
+      },
+      body: JSON.stringify({
+        amount: Math.round(amount * 100), // convert to paise
+        currency: 'INR',
+        receipt: `receipt_${Date.now()}`
+      })
+     });
+
+     const orderData = await response.json();
+     if (!response.ok) {
+       console.error('Razorpay Error Response:', orderData);
+       return res.status(response.status).json({ message: 'Failed to create order with Razorpay.', error: orderData });
+     }
+
+     res.json({
+       orderId: orderData.id,
+       amount: orderData.amount,
+       currency: orderData.currency
+     });
+  } catch (err) {
+    console.error('Payment order creation error:', err);
+    res.status(500).json({ message: 'Internal server error creating payment order.' });
+  }
+});
+
+// 7. Payment Gateways - Verify Razorpay Payment Signature (JWT Protected)
+app.post('/api/payment/verify', authMiddleware, async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ message: 'Missing required Razorpay credentials for verification.' });
+    }
+
+    const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const generated_signature = hmac.digest('hex');
+
+    if (generated_signature === razorpay_signature) {
+      // Mark user as paid in DB
+      const updatedUser = await updateUserPaidStatus(req.user.id, true);
+      res.json({ verified: true, user: updatedUser, message: 'Payment successfully verified and registry activated.' });
+    } else {
+      res.status(400).json({ verified: false, message: 'Payment signature verification failed.' });
+    }
+  } catch (err) {
+    console.error('Payment signature verification error:', err);
+    res.status(500).json({ message: 'Internal server error verifying payment.' });
   }
 });
 

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import Lenis from 'lenis'
 import ganeshImg from '../assets/GaneshYarakala/Ganesh.jpg'
+import ProfileLockOverlay from '../Components/ProfileLockOverlay.jsx'
 
 // WebGL Background Shader Component
 const WebGLShader = () => {
@@ -328,6 +329,7 @@ export default function ProfilePortal({ identifier }) {
 
   const [selectedBlog, setSelectedBlog] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isPaid, setIsPaid] = useState(true)
 
   // Header scroll behavior state
   const [showHeader, setShowHeader] = useState(true)
@@ -392,6 +394,7 @@ export default function ProfilePortal({ identifier }) {
           )
 
           if (matched) {
+            setIsPaid(matched.isPaid ?? false)
             setProfileUser({
               name: matched.name || 'Correspondent',
               email: matched.email || '',
@@ -430,6 +433,12 @@ export default function ProfilePortal({ identifier }) {
     fetchProfileData()
   }, [identifier])
 
+  useEffect(() => {
+    if (!isPaid) {
+      window.location.hash = `#/pending-payment?name=${encodeURIComponent(profileUser.name)}&role=${encodeURIComponent(profileUser.division)}`
+    }
+  }, [isPaid, profileUser])
+
   // Lock body scroll when blog modal is open
   useEffect(() => {
     if (selectedBlog) {
@@ -462,7 +471,7 @@ export default function ProfilePortal({ identifier }) {
     }
   }
 
-  if (loading && identifier?.toLowerCase() !== 'ganesh@bigtv.com') {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white font-mono text-xs text-[#e30613]">
         <div className="flex flex-col items-center gap-3">
@@ -1115,21 +1124,34 @@ export default function ProfilePortal({ identifier }) {
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
-                <a 
-                  href={`mailto:${profileUser.email}`} 
-                  className="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white font-mono text-xs tracking-widest rounded hover:brightness-110 transition-all shadow-md text-center"
-                >
-                  <Mail className="w-4 h-4" /> SEND EMAIL
-                </a>
-                <a 
-                  href="https://linkedin.com" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="flex items-center justify-center gap-3 px-8 py-4 border border-black/10 text-text-primary hover:bg-black/5 font-mono text-xs tracking-widest rounded transition-all text-center"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg> LINKEDIN
-                </a>
+              <div className="relative w-full sm:w-auto">
+                <div className={`flex flex-col sm:flex-row gap-6 w-full sm:w-auto transition-all duration-300 ${!isPaid ? 'blur-md pointer-events-none select-none' : ''}`}>
+                  <a 
+                    href={`mailto:${profileUser.email}`} 
+                    className="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white font-mono text-xs tracking-widest rounded hover:brightness-110 transition-all shadow-md text-center"
+                  >
+                    <Mail className="w-4 h-4" /> SEND EMAIL
+                  </a>
+                  <a 
+                    href="https://linkedin.com" 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="flex items-center justify-center gap-3 px-8 py-4 border border-black/10 text-text-primary hover:bg-black/5 font-mono text-xs tracking-widest rounded transition-all text-center"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg> LINKEDIN
+                  </a>
+                </div>
+                
+                {!isPaid && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm rounded-xl p-4 text-center border border-red-500/20">
+                    <span className="bg-red-500/10 border border-red-500/20 px-2.5 py-0.5 rounded-full text-[8px] font-mono tracking-widest text-red-500 uppercase font-bold mb-2">
+                      PENDING AMOUNT SIGNAL
+                    </span>
+                    <p className="font-mono text-[8px] text-neutral-400 uppercase tracking-widest max-w-[200px] leading-relaxed">
+                      Gateways gated. Unlock via dashboard.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </section>

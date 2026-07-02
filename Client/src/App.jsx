@@ -7,6 +7,7 @@ import Dashboard from './Pages/Dashboard.jsx'
 import AparnaKurup from './Pages/AparnaKurup.jsx'
 import AryaSurendran from './Pages/AryaSurendran.jsx'
 import BinilPothan from './Pages/BinilPothan.jsx'
+import PendingPayment from './Pages/PendingPayment.jsx'
 
 function App() {
   const [hash, setHash] = useState(window.location.hash || '#/')
@@ -25,8 +26,16 @@ function App() {
   }, [hash])
 
   // Basic routing matching hash
+  if (hash.startsWith('#/pending-payment')) {
+    return <PendingPayment />
+  }
+
   if (hash.startsWith('#/ganesh-yarakala')) {
     return <ProfilePortal identifier="ganesh@bigtv.com" />
+  }
+
+  if (hash.startsWith('#/sujaya-parvathy')) {
+    return <ProfilePortal identifier="sujaya@bigtv.com" />
   }
 
   if (hash.startsWith('#/aparna-kurup')) {
@@ -43,7 +52,16 @@ function App() {
 
   if (hash.startsWith('#/profile/')) {
     const identifier = hash.replace('#/profile/', '')
-    return <ProfilePortal identifier={decodeURIComponent(identifier)} />
+    const decoded = decodeURIComponent(identifier)
+    if (decoded.toLowerCase() === 'binil@bigtv.com') {
+      window.location.hash = '#/binil-pothen'
+      return null
+    }
+    if (decoded.toLowerCase() === 'sujaya@bigtv.com') {
+      window.location.hash = '#/sujaya-parvathy'
+      return null
+    }
+    return <ProfilePortal identifier={decoded} />
   }
 
   if (hash.startsWith('#/login')) {

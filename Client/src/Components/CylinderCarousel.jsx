@@ -10,7 +10,14 @@ export function CylinderCarousel({
   cardHeight = 180,
   ...props
 }) {
-  const count = items?.length || 0;
+  let displayItems = [...(items || [])];
+  if (displayItems.length === 1) {
+    displayItems = [displayItems[0], displayItems[0], displayItems[0]];
+  } else if (displayItems.length === 2) {
+    displayItems = [displayItems[0], displayItems[1], displayItems[0], displayItems[1]];
+  }
+
+  const count = displayItems.length;
   if (count === 0) return null;
 
   // Calculate 3D radius using trigonometry: radius = (cardWidth / 2) / tan(PI / count)
@@ -46,7 +53,7 @@ export function CylinderCarousel({
           }
         `}</style>
         
-        {items.map((item, index) => {
+        {displayItems.map((item, index) => {
           const angle = (360 / count) * index;
           return (
             <div

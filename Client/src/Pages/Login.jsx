@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { KeyRound, Mail, ArrowLeft, ShieldAlert, Clock, Terminal, Shield, Cpu, ShieldCheck } from 'lucide-react'
+import logoImg from '../assets/BIGTV-MALAYALAM.jpg'
 
 // WebGL Background Shader (Dark glowing Crimson Red Nebulous Shader)
 const WebGLRedShader = () => {
@@ -212,7 +213,7 @@ export default function Login() {
         
         {/* Left Top Header */}
         <div className="flex items-center gap-3">
-          <span className="w-8 h-8 bg-[#e30613] rounded flex items-center justify-center text-white font-display font-black text-sm">B</span>
+          <img src={logoImg} alt="BIG TV Malayalam" className="h-10 w-auto object-contain rounded bg-white p-0.5" />
           <div className="font-mono text-xs tracking-[0.3em] text-[#e30613] uppercase font-bold">
             BIG TV SYSTEM GATEWAY
           </div>
@@ -293,7 +294,7 @@ export default function Login() {
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Directory
           </a>
           <div className="lg:hidden flex items-center gap-2">
-            <span className="w-6 h-6 bg-[#e30613] rounded flex items-center justify-center text-white font-display font-black text-xs">B</span>
+            <img src={logoImg} alt="BIG TV Malayalam" className="h-8 w-auto object-contain rounded bg-white p-0.5" />
           </div>
         </div>
 
@@ -449,6 +450,40 @@ export default function Login() {
                   onClick={() => {
                     setEmail('arya@bigtv.com')
                     setPassword('arya123')
+                  }}
+                  className="text-xs text-[#e30613] hover:text-[#b0050d] font-bold border border-[#e30613]/20 bg-[#e30613]/5 hover:bg-[#e30613]/10 px-2 py-0.5 rounded transition-all cursor-pointer flex items-center gap-1 self-end sm:self-auto"
+                >
+                  <Cpu className="w-3 h-3" /> AUTOFILL
+                </button>
+              </div>
+
+              {/* Profile 2.7: Binil */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 rounded bg-white/[0.02] border border-white/5 gap-2">
+                <div>
+                  <span className="text-slate-400 block text-[8px] uppercase font-bold tracking-wider">Correspondent (Binil)</span>
+                  <span className="text-white">binil@bigtv.com</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setEmail('binil@bigtv.com')
+                    setPassword('binil123')
+                  }}
+                  className="text-xs text-[#e30613] hover:text-[#b0050d] font-bold border border-[#e30613]/20 bg-[#e30613]/5 hover:bg-[#e30613]/10 px-2 py-0.5 rounded transition-all cursor-pointer flex items-center gap-1 self-end sm:self-auto"
+                >
+                  <Cpu className="w-3 h-3" /> AUTOFILL
+                </button>
+              </div>
+
+              {/* Profile 2.8: Sujaya */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 rounded bg-white/[0.02] border border-white/5 gap-2">
+                <div>
+                  <span className="text-slate-400 block text-[8px] uppercase font-bold tracking-wider">Chief Editor (Sujaya)</span>
+                  <span className="text-white">sujaya@bigtv.com</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setEmail('sujaya@bigtv.com')
+                    setPassword('sujaya123')
                   }}
                   className="text-xs text-[#e30613] hover:text-[#b0050d] font-bold border border-[#e30613]/20 bg-[#e30613]/5 hover:bg-[#e30613]/10 px-2 py-0.5 rounded transition-all cursor-pointer flex items-center gap-1 self-end sm:self-auto"
                 >
