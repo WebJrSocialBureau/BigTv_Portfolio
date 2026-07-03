@@ -16,6 +16,7 @@ import {
   Award,
   BookOpen
 } from 'lucide-react'
+import { API_BASE_URL } from '../utils/api.js'
 
 // WebGL Background Shader (BIG TV Crimson Red Variant)
 const WebGLRedShader = () => {
@@ -263,7 +264,7 @@ export default function Dashboard() {
       }
 
       // 2. Create order on backend (₹2 charge)
-      const resOrder = await fetch('/api/payment/order', {
+      const resOrder = await fetch(`${API_BASE_URL}/api/payment/order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -291,7 +292,7 @@ export default function Dashboard() {
         handler: async function (response) {
           try {
             // 4. Verify signature on backend
-            const resVerify = await fetch('/api/payment/verify', {
+            const resVerify = await fetch(`${API_BASE_URL}/api/payment/verify`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -345,7 +346,7 @@ export default function Dashboard() {
     formData.append('image', file)
 
     try {
-      const response = await fetch('/api/upload', {
+      const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -377,7 +378,7 @@ export default function Dashboard() {
 
     const fetchProfile = async () => {
       try {
-        const response = await fetch('/api/auth/me', {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -435,7 +436,7 @@ export default function Dashboard() {
     }
 
     try {
-      const response = await fetch('/api/users/profile', {
+      const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

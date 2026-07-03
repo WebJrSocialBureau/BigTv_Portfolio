@@ -41,7 +41,23 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'bigtv_newsroom_integrity_secret_key_2026';
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173', // Vite dev server
+  'http://localhost:4173', // Vite preview
+  process.env.CLIENT_URL,  // Vercel production URL (set in Render dashboard)
+].filter(Boolean); // remove undefined if CLIENT_URL not set
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS policy: origin ${origin} is not allowed`));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // Request logger

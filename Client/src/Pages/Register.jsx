@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { User, Mail, Lock, ShieldCheck, ArrowLeft, ShieldAlert, Clock, Terminal, Shield, Cpu } from 'lucide-react'
+import { API_BASE_URL } from '../utils/api.js'
 
 // WebGL Background Shader (Dark glowing Crimson Red Nebulous Shader)
 const WebGLRedShader = () => {
@@ -183,7 +184,7 @@ export default function Register() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { KeyRound, Mail, ArrowLeft, ShieldAlert, Clock, Terminal, Shield, Cpu, ShieldCheck } from 'lucide-react'
 import logoImg from '../assets/BIGTV-MALAYALAM.jpg'
+import { API_BASE_URL } from '../utils/api.js'
 
 // WebGL Background Shader (Dark glowing Crimson Red Nebulous Shader)
 const WebGLRedShader = () => {
@@ -173,7 +174,7 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

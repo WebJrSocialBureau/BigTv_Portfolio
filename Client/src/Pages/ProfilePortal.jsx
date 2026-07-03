@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useSpring, useTransform, AnimatePresence } from 'framer-motion'
+import { API_BASE_URL } from '../utils/api.js'
 import { 
   Award, 
   Mail, 
@@ -384,7 +385,7 @@ export default function ProfilePortal({ identifier }) {
     const fetchProfileData = async () => {
       setLoading(true)
       try {
-        const res = await fetch('/api/users')
+        const res = await fetch(`${API_BASE_URL}/api/users`)
         if (res.ok) {
           const users = await res.json()
           const matched = users.find(u => 

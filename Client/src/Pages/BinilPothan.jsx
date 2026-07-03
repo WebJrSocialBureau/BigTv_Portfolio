@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, MapPin, Award, BookOpen, Compass, Tv, Calendar, ArrowUpRight } from 'lucide-react'
+import { API_BASE_URL } from '../utils/api.js'
 import Lenis from 'lenis'
 import binilImg from '../assets/BinilPothan.webp'
 import ProfileLockOverlay from '../Components/ProfileLockOverlay.jsx'
@@ -191,7 +192,7 @@ export default function BinilPothan() {
     const fetchBinilData = async () => {
       setLoading(true)
       try {
-        const res = await fetch('/api/users')
+        const res = await fetch(`${API_BASE_URL}/api/users`)
         if (res.ok) {
           const users = await res.json()
           const matched = users.find(u => u.email?.toLowerCase() === 'binil@bigtv.com')

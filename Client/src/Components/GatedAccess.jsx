@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, Unlock, Shield, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { API_BASE_URL } from '../utils/api.js'
 
 // Helper to load external scripts dynamically
 const loadScript = (src) => {
@@ -44,7 +45,7 @@ export default function GatedAccess({ identifier, name, division, children }) {
       }
 
       // 2. Create order on backend (nominal ₹2 charge)
-      const resOrder = await fetch('/api/payment/order', {
+      const resOrder = await fetch(`${API_BASE_URL}/api/payment/order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -74,7 +75,7 @@ export default function GatedAccess({ identifier, name, division, children }) {
 
           try {
             // 4. Verify signature on backend
-            const resVerify = await fetch('/api/payment/verify', {
+            const resVerify = await fetch(`${API_BASE_URL}/api/payment/verify`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'

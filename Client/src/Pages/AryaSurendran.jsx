@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
+import { API_BASE_URL } from '../utils/api.js'
 import { 
   ArrowLeft, 
   ExternalLink,
@@ -197,7 +198,7 @@ export default function AryaSurendran() {
   useEffect(() => {
     const fetchAryaPortfolio = async () => {
       try {
-        const res = await fetch('/api/users')
+        const res = await fetch(`${API_BASE_URL}/api/users`)
         if (res.ok) {
           const users = await res.json()
           const arya = users.find(u => u.email?.toLowerCase() === 'arya@bigtv.com')

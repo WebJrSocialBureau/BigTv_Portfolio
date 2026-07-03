@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { API_BASE_URL } from '../utils/api.js'
 import { 
   Award, 
   ArrowLeft, 
@@ -156,7 +157,7 @@ export default function AparnaKurup() {
   useEffect(() => {
     const fetchAparnaPortfolio = async () => {
       try {
-        const res = await fetch('/api/users')
+        const res = await fetch(`${API_BASE_URL}/api/users`)
         if (res.ok) {
           const users = await res.json()
           const aparna = users.find(u => u.email?.toLowerCase() === 'aparna@bigtv.com')

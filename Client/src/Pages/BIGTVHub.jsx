@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
+import { API_BASE_URL } from '../utils/api.js'
 import { 
   Lock, 
   ArrowUpRight, 
@@ -610,7 +611,7 @@ export default function BIGTVHub() {
 
     const fetchCorrespondents = async () => {
       try {
-        const response = await fetch('/api/users')
+        const response = await fetch(`${API_BASE_URL}/api/users`)
         if (response.ok) {
           const data = await response.json()
           setRegisteredCorres(data)
