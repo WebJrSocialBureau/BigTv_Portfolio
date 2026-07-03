@@ -66,7 +66,27 @@ app.use((req, res, next) => {
   next();
 });
 
-// Helper: Generate JWT
+// Health check / root route
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    service: 'BIG TV Newsroom API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: [
+      'POST /api/auth/register',
+      'POST /api/auth/login',
+      'GET  /api/auth/me',
+      'GET  /api/users',
+      'PUT  /api/users/profile',
+      'POST /api/upload',
+      'POST /api/payment/order',
+      'POST /api/payment/verify',
+    ]
+  });
+});
+
+
 function generateToken(user) {
   return jwt.sign(
     { id: user.id, email: user.email },
