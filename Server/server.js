@@ -41,11 +41,14 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'bigtv_newsroom_integrity_secret_key_2026';
 
 // Middleware
+// Strip trailing slash from CLIENT_URL to avoid CORS mismatch
+const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/+$/, '') : null;
+
 const allowedOrigins = [
   'http://localhost:5173', // Vite dev server
   'http://localhost:4173', // Vite preview
-  process.env.CLIENT_URL,  // Vercel production URL (set in Render dashboard)
-].filter(Boolean); // remove undefined if CLIENT_URL not set
+  clientUrl,               // Vercel production URL (set in Render dashboard)
+].filter(Boolean); // remove undefined/null if CLIENT_URL not set
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -54,6 +57,7 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
+    console.warn(`CORS blocked origin: ${origin} | Allowed: ${allowedOrigins.join(', ')}`);
     return callback(new Error(`CORS policy: origin ${origin} is not allowed`));
   },
   credentials: true,
